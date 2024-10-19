@@ -1,12 +1,13 @@
-const width = 800;
-const height = 600;
-
-const tile_width = 50;
+var current_level = 0;
 
 class Example extends Phaser.Scene {
+
     preload () {
-        this.load.image("wood", "./assets/wood.jpg")
-        this.load.image("steel", "./assets/steel.jpg")
+        this.load.image("wood", "./assets/wood.jpg");
+        this.load.image("steel", "./assets/steel.jpg");
+
+        var level = Parser(`level${current_level}`);
+
     }
 
     create () {
@@ -18,12 +19,13 @@ class Example extends Phaser.Scene {
     render_tile(block) {
         this.matter.add.image(block.i_x, block.i_y, block.s_texture);
     }
+
 }
 
 const config = {
     type: Phaser.AUTO,
-    width: width,
-    height: height,
+    width: 800,
+    height: 600,
     scene: Example,
     physics: {
         default: 'matter'
