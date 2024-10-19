@@ -19,6 +19,8 @@ class Example extends Phaser.Scene {
         this.load.image('Startblock', './assets/images/StartBlock.png');
         this.load.image('Fireblock', './assets/images/FireBlock.png');
         this.load.image('GoBlock', './assets/images/GoBlock.png');
+        this.load.image('angle60', './assets/images/angle60.png');
+        this.load.image('angle45', './assets/images/angle45.png');
 
         Parser(`level${current_level}`).then(data => {
             if (data) {
@@ -42,6 +44,8 @@ class Example extends Phaser.Scene {
         const body1 = this.matter.add.image(200, 150, 'Startblock').setStatic(true).setName("Start");
         const body2 = this.matter.add.image(200, 350, 'Fireblock').setStatic(true).setName("Fire");
         const Gobody = this.matter.add.image(200, 550, 'GoBlock').setStatic(true).setName("Go");
+        const angle60 = this.matter.add.image(300, 150, 'angle60').setStatic(true).setName("angle60");
+        const angle45 = this.matter.add.image(300, 250, 'angle45').setStatic(true).setName("angle45");
         Gobody.setInteractive();
         
         const fillOver = 0xff0000;
@@ -51,7 +55,7 @@ class Example extends Phaser.Scene {
         var Connections = {}
 
         // Dragging stuff
-        const bodies = [ body1, body2];
+        const bodies = [ body1, body2, angle45, angle60];
         var SelectedBlock = -1 // the block we are dragging
         var isDragging = false // If we are dragging
         var ConnectedBlock // The block we are connecting to
@@ -190,6 +194,12 @@ class Example extends Phaser.Scene {
             var tempID = startID
             while (Connections[tempID] != null){
                 console.log(bodies[Connections[tempID]].name)
+                
+                if (bodies[Connections[tempID]].name == "angle45") {
+                    this.cannon.angle = -45;
+                    console.log("angle45")
+                }
+                
                 if (bodies[Connections[tempID]].name == "Fire")
                 {
                     Gobody.destroy();
