@@ -9,8 +9,9 @@ class BlockType {
 
 const PROPERTIES = {
     "pirate":{
-        friction: 0.6,
-        density:0.5
+        restitution: 0.8,
+        friction: 0.1,
+        density:0.2
     },
     "wood": {
         restitution: 0.8,
@@ -23,16 +24,19 @@ const PROPERTIES = {
         density: 1 // Density
     },
     "platform":{
-        isStatic: true
+        isStatic: true,
         density: 0.001 // Density
     },
     "cannon_barrel": {
         isStatic: true
     },
+    "cannon_base": {
+        isStatic: true
+    },
     "cannon_ball": {
         restitution: 1.0, // Bounciness
         friction: 0.5, // Friction
-        density: 0.001 // Density
+        density: 1 // Density
     }
 
 }

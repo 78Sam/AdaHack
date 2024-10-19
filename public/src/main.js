@@ -1,6 +1,7 @@
 
-var current_level = 1;
+var current_level = 2;
 var fired = false;
+var died = false;
 
 class Example extends Phaser.Scene {
 
@@ -9,7 +10,12 @@ class Example extends Phaser.Scene {
         this.load.image("steel", "./assets/images/steel.png");
         this.load.image("platform","./assets/images/beam.png");
         this.load.image("pirate","./assets/images/pirate.png");
-        this.load.image("cannon","./assets/images/cannon_base.png");
+        this.load.image("cannon_base","./assets/images/base2.png");
+        this.load.image("cannon_barrel","./assets/images/cannon_barrel.png");
+        this.load.image("cannon_ball","./assets/images/cannon_ball.png");
+        this.load.image("bg", "./assets/images/bg.jpg");
+        this.load.audio("fire_sound", "./assets/Sounds/cannon.mp3");
+        this.load.audio("death_sound", "./assets/Sounds/pirate_death.mp3");
 
         Parser(`level${current_level}`).then(data => {
             if (data) {
@@ -27,31 +33,49 @@ class Example extends Phaser.Scene {
 
     create () {
 
+        
         // this.input.keyboard.on('keydown-W', this.fire, this);
-
+        
         const gui = new dat.GUI();
         const p1 = gui.addFolder("Controls");
-
+        
         const WORLD_HEIGHT = 600;
         const WORLD_WIDTH = 800;
 
-        this.cannon = new Cannon(500, 500, 300, 400, 0, 0, 0, 0, 0);
+        // this.add.image(0, WORLD_WIDTH, "bg").setOrigin(0, 1);
+        this.add.image(0, 0, "bg").setOrigin(0, 0).setDisplaySize(WORLD_WIDTH, WORLD_HEIGHT).setAlpha(0.3);
+        
+        this.cannon = new Cannon(500, 500, 300, 400, 0, 0, 0, 0.5, 0);
         p1.add(this.cannon, 'angle', 0, 6).step(0.1).listen();
-        p1.add(this.cannon, 'force', 0, 1).step(0.1).listen();
+        p1.add(this.cannon, 'force', 0.5, 3).step(0.1).listen();
         p1.add(this.cannon, 'x', 0, WORLD_WIDTH).step(1).listen();
         p1.add(this.cannon, 'y', 0, WORLD_HEIGHT).step(1).listen();
         p1.open();
 
 
-        this.matter.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+        // this.matter.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+
+        this.cannon_image = this.render_cannon(this.cannon);
 
         this.level["level"].forEach(element => {
             this.render_tile(new BlockType(element["s_type"], element["i_x"], element["i_y"]));
         });
 
-        this.cannon_image = this.render_cannon(this.cannon);
 
         this.cursors = this.input.keyboard.createCursorKeys();
+
+        this.matter.world.on('collisionstart', (event) => {
+            event.pairs.forEach((pair) => {
+                const { bodyA, bodyB } = pair;
+                if ((bodyA.gameObject === this.ball && bodyB.gameObject === this.pirate) ||
+                    (bodyA.gameObject === this.pirate && bodyB.gameObject === this.ball)) {
+                    if (!died) {
+                        this.sound.play("death_sound");
+                        died = true;
+                    }
+                }
+            });
+        });
     }
 
     update() {
@@ -71,10 +95,12 @@ class Example extends Phaser.Scene {
 
             console.log(-1*this.cannon_image.angle);
 
+            this.sound.play("fire_sound");
+
             var rad = Phaser.Math.DegToRad(this.cannon_image.angle);
             
-            var ball = this.render_cannon_ball(new BlockType("cannon_ball", this.cannon.x + 100*Math.cos(rad), this.cannon.y + 100*Math.sin(rad)));
-            ball.setVelocity(10*Math.cos(rad), 10*Math.sin(rad));
+            this.ball = this.render_cannon_ball(new BlockType("cannon_ball", this.cannon.x + 100*Math.cos(rad), this.cannon.y + 100*Math.sin(rad)));
+            this.ball.setVelocity(15*Math.cos(rad)*this.cannon.force, 15*Math.sin(rad)*this.cannon.force);
 
             setTimeout(function() {
                 fired = false;
@@ -86,10 +112,18 @@ class Example extends Phaser.Scene {
     
 
     render_tile(block) {
+        if (block.s_type == "cannon_base") {
+            this.cannon.x = block.i_x*50;
+            this.cannon.y = block.i_y*50;
+        }
         console.log(PROPERTIES);
         console.log(block.s_type);
         const properties = PROPERTIES[block.s_type] || {};
-        this.matter.add.image(block.i_x * 50, block.i_y * 50, block.s_type, null, properties).setScale(1);
+        if (block.s_type == "pirate") {
+            this.pirate = this.matter.add.image(block.i_x * 50, block.i_y * 50, block.s_type, null, properties).setScale(1);
+        } else {
+            this.matter.add.image(block.i_x * 50, block.i_y * 50, block.s_type, null, properties).setScale(1);
+        }
     }
 
     render_cannon(cannon) {
@@ -100,7 +134,7 @@ class Example extends Phaser.Scene {
     render_cannon_ball(ball) {
         const properties = PROPERTIES["cannon_ball"] || {};
         console.log(ball.x, ball.y);
-        return this.matter.add.image(ball.i_x, ball.i_y, "cannon_ball", null, properties).setScale(2);
+        return this.matter.add.image(ball.i_x, ball.i_y, "cannon_ball", null, properties).setScale(1);
     }
 }
 
