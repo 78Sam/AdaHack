@@ -1,7 +1,11 @@
 {
-    "ammo_types": [
+    "allowed_ammo": [
         "regular",
         "explosive"
     ],
-    "cat": "dog"
+    "level": [
+        ["empty", "empty", "empty"],
+        ["empty", "empty", "empty"],
+        ["wood", "wood", "wood"]
+    ]
 }
