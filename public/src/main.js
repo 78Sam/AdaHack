@@ -21,6 +21,7 @@ class Example extends Phaser.Scene {
         this.load.image('GoBlock', './assets/images/GoBlock.png');
         this.load.image('angle60', './assets/images/angle60.png');
         this.load.image('angle45', './assets/images/angle45.png');
+        this.load.image('angle30', './assets/images/angle30.png');
 
         Parser(`level${current_level}`).then(data => {
             if (data) {
@@ -46,6 +47,7 @@ class Example extends Phaser.Scene {
         const Gobody = this.matter.add.image(200, 550, 'GoBlock').setStatic(true).setName("Go");
         const angle60 = this.matter.add.image(300, 150, 'angle60').setStatic(true).setName("angle60");
         const angle45 = this.matter.add.image(300, 250, 'angle45').setStatic(true).setName("angle45");
+        const angle30 = this.matter.add.image(300, 350, 'angle30').setStatic(true).setName("angle30");
         Gobody.setInteractive();
         
         const fillOver = 0xff0000;
@@ -55,7 +57,7 @@ class Example extends Phaser.Scene {
         var Connections = {}
 
         // Dragging stuff
-        const bodies = [ body1, body2, angle45, angle60];
+        const bodies = [ body1, body2, angle45, angle60, angle30];
         var SelectedBlock = -1 // the block we are dragging
         var isDragging = false // If we are dragging
         var ConnectedBlock // The block we are connecting to
@@ -194,10 +196,21 @@ class Example extends Phaser.Scene {
             var tempID = startID
             while (Connections[tempID] != null){
                 console.log(bodies[Connections[tempID]].name)
-                
+
                 if (bodies[Connections[tempID]].name == "angle45") {
-                    this.cannon.angle = -45;
+                    this.cannon.angle = -120;
+                    // this.cannon.angle = -45;
                     console.log("angle45")
+                }
+
+                if (bodies[Connections[tempID]].name == "angle60") {
+                    this.cannon.angle = -45;
+                    console.log("angle60")
+                }
+
+                if (bodies[Connections[tempID]].name == "angle30") {
+                    this.cannon.angle = -0.3;
+                    console.log("angle30")
                 }
                 
                 if (bodies[Connections[tempID]].name == "Fire")
@@ -272,25 +285,50 @@ class Example extends Phaser.Scene {
         this.cannon_image.y = this.cannon.y;
     }
 
+    // fire() {
+    //     setTimeout(function() {
+    //         if (!fired) {
+    //             fired = true;
+    
+    //             console.log(-1*this.cannon_image.angle);
+    
+    //             this.sound.play("fire_sound");
+    
+    //             var rad = Phaser.Math.DegToRad(this.cannon_image.angle);
+                
+    //             this.ball = this.render_cannon_ball(new BlockType("cannon_ball", this.cannon.x + 100*Math.cos(rad), this.cannon.y + 100*Math.sin(rad)));
+    //             this.ball.setVelocity(15*Math.cos(rad)*this.cannon.force, 15*Math.sin(rad)*this.cannon.force);
+    
+    //             setTimeout(function() {
+    //                 fired = false;
+    //                 // ball.destroy();
+    //             }, 1000);
+    //         }
+    //     }, 1000);
+    //     // ball.setAngle(this.cannon_image.angle);
+    // }
+
     fire() {
-        if (!fired) {
-            fired = true;
-
-            console.log(-1*this.cannon_image.angle);
-
-            this.sound.play("fire_sound");
-
-            var rad = Phaser.Math.DegToRad(this.cannon_image.angle);
-            
-            this.ball = this.render_cannon_ball(new BlockType("cannon_ball", this.cannon.x + 100*Math.cos(rad), this.cannon.y + 100*Math.sin(rad)));
-            this.ball.setVelocity(15*Math.cos(rad)*this.cannon.force, 15*Math.sin(rad)*this.cannon.force);
-
-            setTimeout(function() {
-                fired = false;
-                // ball.destroy();
-            }, 1000);
-        }
-        // ball.setAngle(this.cannon_image.angle);
+        setTimeout(() => {
+            if (!this.fired) {
+                this.fired = true;
+    
+                console.log(-1 * this.cannon_image.angle);
+    
+                this.sound.play("fire_sound");
+    
+                var rad = Phaser.Math.DegToRad(this.cannon_image.angle);
+    
+                this.ball = this.render_cannon_ball(new BlockType("cannon_ball", this.cannon.x + 100 * Math.cos(rad), this.cannon.y + 100 * Math.sin(rad)));
+                this.ball.setVelocity(15 * Math.cos(rad) * this.cannon.force, 15 * Math.sin(rad) * this.cannon.force);
+    
+                setTimeout(() => {
+                    this.fired = false;
+                    // this.ball.destroy(); // Uncomment if you want to destroy the ball after 1 second
+                }, 1000);
+            }
+        }, 1000);
+        // this.ball.setAngle(this.cannon_image.angle); // Uncomment if you want to set the angle of the ball
     }
     
 

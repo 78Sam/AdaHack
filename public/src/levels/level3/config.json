@@ -9,7 +9,6 @@
         {"s_type":"platform", "i_x":1, "i_y":10},
         {"s_type":"platform", "i_x":2, "i_y":10},
         {"s_type":"platform", "i_x":8, "i_y":10},
-        {"s_type":"wood", "i_x":8, "i_y":9},
         {"s_type":"wood", "i_x":8, "i_y":8},
         {"s_type":"wood", "i_x":8, "i_y":7},
         {"s_type":"platform", "i_x":9, "i_y":10},
