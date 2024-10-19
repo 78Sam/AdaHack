@@ -8,12 +8,22 @@ class BlockType {
 }
 
 const PROPERTIES = {
+    "pirate":{
+        friction: 0.6,
+        density:0.5
+    },
     "wood": {
-        isStatic: true
+        restitution: 0.8,
+        friction: 0.6,
+        density: 0.1
     },
     "steel": {
         restitution: 1.0, // Bounciness
         friction: 0.5, // Friction
-        density: 0.001 // Density
+        density: 1 // Density
+    },
+    "platform":{
+        isStatic: true
     }
+
 }

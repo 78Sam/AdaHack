@@ -1,11 +1,14 @@
-var current_level = 1;
+var current_level = 3;
 
 
 class Example extends Phaser.Scene {
 
     preload () {
         this.load.image("wood", "./assets/images/wood.png");
-        this.load.image("steel", "./assets/steel.jpg");
+        this.load.image("steel", "./assets/images/steel.png");
+        this.load.image("platform","./assets/images/beam.png");
+        this.load.image("pirate","./assets/images/pirate.png");
+        this.load.image("cannon","./assets/images/cannon_base.png");
 
         Parser(`level${current_level}`).then(data => {
             if (data) {
