@@ -39,15 +39,19 @@ class Example extends Phaser.Scene {
 
     create () {
 
+        const WORLD_HEIGHT = 600;
+        const WORLD_WIDTH = 800;
+
+
 
         // TYLER START
 
-        const body1 = this.matter.add.image(200, 150, 'Startblock').setStatic(true).setName("Start");
-        const body2 = this.matter.add.image(200, 350, 'Fireblock').setStatic(true).setName("Fire");
-        const Gobody = this.matter.add.image(200, 550, 'GoBlock').setStatic(true).setName("Go");
-        const angle60 = this.matter.add.image(300, 150, 'angle60').setStatic(true).setName("angle60");
-        const angle45 = this.matter.add.image(300, 250, 'angle45').setStatic(true).setName("angle45");
-        const angle30 = this.matter.add.image(300, 350, 'angle30').setStatic(true).setName("angle30");
+        const body1 = this.matter.add.image(WORLD_WIDTH-50, 50, 'Startblock').setStatic(true).setName("Start");
+        const body2 = this.matter.add.image(WORLD_WIDTH-50, 150, 'Fireblock').setStatic(true).setName("Fire");
+        const Gobody = this.matter.add.image(WORLD_WIDTH-50, 250, 'GoBlock').setStatic(true).setName("Go");
+        const angle60 = this.matter.add.image(WORLD_WIDTH-50, 350, 'angle60').setStatic(true).setName("angle60");
+        const angle45 = this.matter.add.image(WORLD_WIDTH-50, 450, 'angle45').setStatic(true).setName("angle45");
+        const angle30 = this.matter.add.image(WORLD_WIDTH-50, 550, 'angle30').setStatic(true).setName("angle30");
         Gobody.setInteractive();
         
         const fillOver = 0xff0000;
@@ -235,9 +239,6 @@ class Example extends Phaser.Scene {
         const gui = new dat.GUI();
         const p1 = gui.addFolder("Controls");
         
-        const WORLD_HEIGHT = 600;
-        const WORLD_WIDTH = 800;
-
         // this.add.image(0, WORLD_WIDTH, "bg").setOrigin(0, 1);
         this.add.image(0, 0, "bg").setOrigin(0, 0).setDisplaySize(WORLD_WIDTH, WORLD_HEIGHT).setAlpha(0.3);
         
