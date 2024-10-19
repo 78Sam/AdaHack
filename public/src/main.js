@@ -1,3 +1,8 @@
+const width = 800;
+const height = 600;
+
+const tile_width = 50;
+
 class Example extends Phaser.Scene {
     preload () {
         this.load.image("wood", "./assets/wood.jpg")
