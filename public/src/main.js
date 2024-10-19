@@ -1,4 +1,4 @@
-var current_level = 0;
+var current_level = 1;
 
 class Example extends Phaser.Scene {
 
@@ -6,18 +6,33 @@ class Example extends Phaser.Scene {
         this.load.image("wood", "./assets/wood.jpg");
         this.load.image("steel", "./assets/steel.jpg");
 
-        var level = Parser(`level${current_level}`);
+        Parser(`level${current_level}`).then(data => {
+            if (data) {
+                this.level = data;
+            } else {
+                console.log("Error");
+            }
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+
+        console.log(this.level);
 
     }
 
     create () {
-        this.input.keyboard.on("keydown-A", () => {r1.x = r1.x + 50; r1.y = r1.y += 30});
-        this.render_tile(new BlockType("wood", 3, 4));
-        this.render_tile(new BlockType("steel", 100, 300));
+
+        this.level["level"].forEach(element => {
+            this.render_tile(new BlockType(element["s_type"], element["i_x"], element["i_y"]));
+        });
+
+        // this.input.keyboard.on("keydown-A", () => {r1.x = r1.x + 50; r1.y = r1.y += 30});
+        // this.render_tile(new BlockType("wood", 3, 4));
+        // this.render_tile(new BlockType("steel", 100, 300));
     }
 
     render_tile(block) {
-        this.matter.add.image(block.i_x, block.i_y, block.s_texture);
+        this.matter.add.image(block.i_x*50, block.i_y*50, block.s_texture);
     }
 
 }
