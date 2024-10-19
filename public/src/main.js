@@ -1,3 +1,4 @@
+
 var current_level = 1;
 var fired = false;
 
@@ -5,9 +6,10 @@ class Example extends Phaser.Scene {
 
     preload () {
         this.load.image("wood", "./assets/images/wood.png");
-        this.load.image("steel", "./assets/steel.jpg");
-        this.load.image("cannon_barrel", "./assets/images/cannon_barrel.png");
-        this.load.image("cannon_ball", "./assets/images/cannon_ball.png");
+        this.load.image("steel", "./assets/images/steel.png");
+        this.load.image("platform","./assets/images/beam.png");
+        this.load.image("pirate","./assets/images/pirate.png");
+        this.load.image("cannon","./assets/images/cannon_base.png");
 
         Parser(`level${current_level}`).then(data => {
             if (data) {
