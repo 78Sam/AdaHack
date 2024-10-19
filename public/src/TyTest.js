@@ -3,6 +3,8 @@ class Example extends Phaser.Scene
     preload(){
         //this.load.setBaseURL('./assets');
         this.load.image('Startblock', './assets/StartBlock.png');
+        this.load.image('Fireblock', './assets/FireBlock.png');
+        this.load.image('GoBlock', './assets/GoBlock.png');
     }
     constructor()
     {
@@ -11,10 +13,10 @@ class Example extends Phaser.Scene
 
     create()
     {
-        const body1 = this.matter.add.image(400, 150, 'StartBlock').setStatic(true);
-        const body2 = this.matter.add.image(600, 350, 'platform').setStatic(true);
-        const body3 = this.matter.add.image(200, 550, 'platform').setStatic(true);
-        const body4 = this.matter.add.image(200, 300, 'platform').setStatic(true);
+        const body1 = this.matter.add.image(400, 150, 'Startblock').setStatic(true).setName("Start");
+        const body2 = this.matter.add.image(600, 350, 'Fireblock').setStatic(true).setName("Fire");
+        const Gobody = this.matter.add.image(200, 550, 'GoBlock').setStatic(true).setName("Go");
+        Gobody.setInteractive();
         
         const fillOver = 0xff0000;
         const strokeOver = 0xffff00;
@@ -23,7 +25,7 @@ class Example extends Phaser.Scene
         var Connections = {}
 
         // Dragging stuff
-        const bodies = [ body1, body2, body3, body4];
+        const bodies = [ body1, body2];
         var SelectedBlock = -1 // the block we are dragging
         var isDragging = false // If we are dragging
         var ConnectedBlock // The block we are connecting to
@@ -62,11 +64,11 @@ class Example extends Phaser.Scene
                             hit = true
                             ConnectedBlock = i
                             this.matter.world.setBodyRenderStyle(body, fillOver, strokeOver, lineThicknessOver);
-                            body.setTint(0xffffff)
+                            //body.setTint(0xffffff)
                         }
                         else
                         {
-                            body.setTint(0xff0000)
+                            //body.setTint(0xff0000)
                             this.matter.world.setBodyRenderStyle(body);
                         }
                     }
@@ -144,7 +146,35 @@ class Example extends Phaser.Scene
 
 
         },this);
-   
+        
+        Gobody.on('pointerup', () =>
+        {
+            //Run the code
+            //Find the Start Block
+            var startID = null
+            var i
+            for (i in Connections){
+                console.log(bodies[i].name)
+                if (bodies[i].name == "Start"){
+                    startID = i;
+                    
+                }
+            }
+            console.log(startID)
+            var tempID = startID
+            while (Connections[tempID] != null){
+                console.log(bodies[Connections[tempID]].name)
+                if (bodies[Connections[tempID]].name == "Fire")
+                {
+                    Gobody.destroy();
+                    console.log("fired")
+                }
+               
+                tempID = Connections[tempID];
+            }
+
+
+        });
 
     }
     update ()
