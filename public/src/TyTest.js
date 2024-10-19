@@ -7,38 +7,149 @@ class Example extends Phaser.Scene
 
     create()
     {
-        const body1 = this.matter.add.polygon(100, 300, 8, 70, { isStatic: true });
-        const body2 = this.matter.add.fromVertices(300, 300, '50 0 63 38 100 38 69 59 82 100 50 75 18 100 31 59 0 38 37 38', {}, true);
-        const body3 = this.matter.add.polygon(500, 300, 3, 60);
-        const body4 = this.matter.add.rectangle(700, 300, 48, 256);
-
+        const body1 = this.matter.add.image(400, 150, 'platform').setStatic(true);
+        const body2 = this.matter.add.image(600, 350, 'platform').setStatic(true);
+        const body3 = this.matter.add.image(200, 550, 'platform').setStatic(true);
+        const body4 = this.matter.add.image(200, 300, 'platform').setStatic(true);
+        
         const fillOver = 0xff0000;
         const strokeOver = 0xffff00;
         const lineThicknessOver = 4;
 
-        const bodies = [ body1, body2, body3, body4 ];
+        var Connections = {}
 
+        // Dragging stuff
+        const bodies = [ body1, body2, body3, body4];
+        var SelectedBlock = -1 // the block we are dragging
+        var isDragging = false // If we are dragging
+        var ConnectedBlock // The block we are connecting to
         this.input.on('pointermove', function (pointer) {
             const x = pointer.worldX;
             const y = pointer.worldY;
 
-            for (let i = 0; i < bodies.length; i++)
-            {
-                const body = bodies[i];
+            if (isDragging  && SelectedBlock !=null){
 
-                if (this.matter.containsPoint(body, x, y))
-                {
-                    this.matter.world.setBodyRenderStyle(body, fillOver, strokeOver, lineThicknessOver);
+                bodies[SelectedBlock].setPosition(x,y)
+                
+                //remove this from table
+                for(var i in Connections){
+                    if(Connections[i] == SelectedBlock){
+                        delete Connections[i]
+                        break;
+                    }
                 }
-                else
+                var tempBlock = SelectedBlock
+                while (Connections[tempBlock]!= null){
+                    var bounds = bodies[tempBlock].getBounds();
+                    var newX = bounds.x + bounds.width/2;
+                    var newY = bounds.y + bounds.height+bounds.height/2;
+                    bodies[Connections[tempBlock]].setPosition(newX,newY);
+                    tempBlock= Connections[tempBlock]
+                };
+                
+                // ConnectingBlocks
+                var hit = false
+                for (let i = 0; i < bodies.length; i++)
                 {
-                    this.matter.world.setBodyRenderStyle(body);
+                    const body = bodies[i];
+                    if (i!= SelectedBlock){ //If not the block we are moving
+                        if (this.matter.containsPoint(body, x, y))
+                        {
+                            hit = true
+                            ConnectedBlock = i
+                            this.matter.world.setBodyRenderStyle(body, fillOver, strokeOver, lineThicknessOver);
+                            body.setTint(0xffffff)
+                        }
+                        else
+                        {
+                            body.setTint(0xff0000)
+                            this.matter.world.setBodyRenderStyle(body);
+                        }
+                    }
+
+                }
+                if (!hit) {
+                    ConnectedBlock = null;
                 }
             }
+            else
+            {   
+                var hit = false
+                for (let i = 0; i < bodies.length; i++)
+                {
+                    const body = bodies[i];
+
+                    if (this.matter.containsPoint(body, x, y))
+                    {
+                        hit = true
+                        SelectedBlock = i
+                        this.matter.world.setBodyRenderStyle(body, fillOver, strokeOver, lineThicknessOver);
+                    }
+                    else
+                    {
+                        this.matter.world.setBodyRenderStyle(body);
+                    }
+                }
+                if (!hit) {
+                    SelectedBlock = null;
+                }
+            }
+            
 
         }, this);
+        this.input.on('pointerdown', function (pointer) {
+            isDragging = true;
+        },this);
+        this.input.on('pointerup', function (pointer) {
+            isDragging = false;
+            
+            if (ConnectedBlock!=null && SelectedBlock != null){
+                //If we are connecting with something then connect
+                var MainBody = bodies[ConnectedBlock];
+                var MovedBody = bodies[SelectedBlock];
+
+                var MainBounds = MainBody.getBounds();
+                var MovedBounds = MovedBody.getBounds();
+
+                var ConnectionPointX = MainBounds.x + MainBounds.width/2;
+                var ConnectionPointY = MainBounds.y + MainBounds.height + MovedBounds.height/2;
+
+                MovedBody.setPosition(ConnectionPointX,ConnectionPointY);
+
+                //Add list to array of commands
+                if (Connections[ConnectedBlock]!=null){ // If it already exists then we want to place this new block in the middle
+                    var temp = Connections[ConnectedBlock]
+                    delete Connections[ConnectedBlock]
+                    Connections[ConnectedBlock] = SelectedBlock
+                    Connections[SelectedBlock] = temp
+
+                    //move everthing down
+                    var tempBlock = SelectedBlock
+                    while (Connections[tempBlock]!= null){
+                        var bounds = bodies[tempBlock].getBounds();
+                        var newX = bounds.x + bounds.width/2;
+                        var newY = bounds.y + bounds.height+bounds.height/2;
+                        bodies[Connections[tempBlock]].setPosition(newX,newY);
+                        tempBlock= Connections[tempBlock]
+                    };
+                }
+                Connections[ConnectedBlock] = SelectedBlock
+                console.log(Connections)
+            };
+            
+
+
+        },this);
+   
+
+    }
+    update ()
+    {
+        
     }
 }
+
+
 
 const config = {
     type: Phaser.AUTO,
@@ -50,9 +161,6 @@ const config = {
         default: 'matter',
         matter: {
             enableSleeping: false,
-            gravity: {
-                y: 0
-            },
             debug: {}
         }
     },
