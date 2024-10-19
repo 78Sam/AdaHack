@@ -4,7 +4,7 @@ var current_level = 1;
 class Example extends Phaser.Scene {
 
     preload () {
-        this.load.image("wood", "./assets/wood.jpg");
+        this.load.image("wood", "./assets/images/wood.png");
         this.load.image("steel", "./assets/steel.jpg");
 
         Parser(`level${current_level}`).then(data => {
@@ -39,7 +39,7 @@ class Example extends Phaser.Scene {
         console.log(PROPERTIES);
         console.log(block.s_type);
         const properties = PROPERTIES[block.s_type] || {};
-        this.matter.add.image(block.i_x * 50, block.i_y * 50, block.s_type, null, properties).setScale(0.1);
+        this.matter.add.image(block.i_x * 50, block.i_y * 50, block.s_type, null, properties).setScale(1);
     }
 
 }
