@@ -1,0 +1,7 @@
+{
+    "ammo_types": [
+        "regular",
+        "explosive"
+    ],
+    "cat": "dog"
+}
