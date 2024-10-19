@@ -1,5 +1,6 @@
-var current_level = 3;
 
+var current_level = 1;
+var fired = false;
 
 class Example extends Phaser.Scene {
 
@@ -26,15 +27,61 @@ class Example extends Phaser.Scene {
 
     create () {
 
-        this.matter.world.setBounds(0, 0, 800, 600);
+        // this.input.keyboard.on('keydown-W', this.fire, this);
+
+        const gui = new dat.GUI();
+        const p1 = gui.addFolder("Controls");
+
+        const WORLD_HEIGHT = 600;
+        const WORLD_WIDTH = 800;
+
+        this.cannon = new Cannon(500, 500, 300, 400, 0, 0, 0, 0, 0);
+        p1.add(this.cannon, 'angle', 0, 6).step(0.1).listen();
+        p1.add(this.cannon, 'force', 0, 1).step(0.1).listen();
+        p1.add(this.cannon, 'x', 0, WORLD_WIDTH).step(1).listen();
+        p1.add(this.cannon, 'y', 0, WORLD_HEIGHT).step(1).listen();
+        p1.open();
+
+
+        this.matter.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
 
         this.level["level"].forEach(element => {
             this.render_tile(new BlockType(element["s_type"], element["i_x"], element["i_y"]));
         });
 
-        // this.input.keyboard.on("keydown-A", () => {r1.x = r1.x + 50; r1.y = r1.y += 30});
-        // this.render_tile(new BlockType("wood", 3, 4));
-        // this.render_tile(new BlockType("steel", 100, 300));
+        this.cannon_image = this.render_cannon(this.cannon);
+
+        this.cursors = this.input.keyboard.createCursorKeys();
+    }
+
+    update() {
+        // this.render_cannon(cannon);
+        // console.log(this.cannon_image.angle, this.cannon.angle);
+        if (this.cursors.space.isDown) {
+            this.fire();
+        }
+        this.cannon_image.rotation = this.cannon.angle;
+        this.cannon_image.x = this.cannon.x;
+        this.cannon_image.y = this.cannon.y;
+    }
+
+    fire() {
+        if (!fired) {
+            fired = true;
+
+            console.log(-1*this.cannon_image.angle);
+
+            var rad = Phaser.Math.DegToRad(this.cannon_image.angle);
+            
+            var ball = this.render_cannon_ball(new BlockType("cannon_ball", this.cannon.x + 100*Math.cos(rad), this.cannon.y + 100*Math.sin(rad)));
+            ball.setVelocity(10*Math.cos(rad), 10*Math.sin(rad));
+
+            setTimeout(function() {
+                fired = false;
+                // ball.destroy();
+            }, 1000);
+        }
+        // ball.setAngle(this.cannon_image.angle);
     }
     
 
@@ -45,6 +92,16 @@ class Example extends Phaser.Scene {
         this.matter.add.image(block.i_x * 50, block.i_y * 50, block.s_type, null, properties).setScale(1);
     }
 
+    render_cannon(cannon) {
+        const properties = PROPERTIES["cannon_barrel"] || {};
+        return this.matter.add.image(this.cannon.x, this.cannon.y, "cannon_barrel", null, properties).setScale(2);
+    }
+
+    render_cannon_ball(ball) {
+        const properties = PROPERTIES["cannon_ball"] || {};
+        console.log(ball.x, ball.y);
+        return this.matter.add.image(ball.i_x, ball.i_y, "cannon_ball", null, properties).setScale(2);
+    }
 }
 
 const config = {
@@ -61,3 +118,7 @@ const config = {
 };
 
 const game = new Phaser.Game(config);
+
+window.addEventListener('load', () => {
+    game.canvas.focus();
+});
