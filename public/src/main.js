@@ -1,5 +1,6 @@
 var current_level = 1;
 
+
 class Example extends Phaser.Scene {
 
     preload () {
@@ -22,6 +23,8 @@ class Example extends Phaser.Scene {
 
     create () {
 
+        this.matter.world.setBounds(0, 0, 800, 600);
+
         this.level["level"].forEach(element => {
             this.render_tile(new BlockType(element["s_type"], element["i_x"], element["i_y"]));
         });
@@ -30,9 +33,13 @@ class Example extends Phaser.Scene {
         // this.render_tile(new BlockType("wood", 3, 4));
         // this.render_tile(new BlockType("steel", 100, 300));
     }
+    
 
     render_tile(block) {
-        this.matter.add.image(block.i_x*50, block.i_y*50, block.s_texture);
+        console.log(PROPERTIES);
+        console.log(block.s_type);
+        const properties = PROPERTIES[block.s_type] || {};
+        this.matter.add.image(block.i_x * 50, block.i_y * 50, block.s_type, null, properties).setScale(0.1);
     }
 
 }
@@ -43,7 +50,10 @@ const config = {
     height: 600,
     scene: Example,
     physics: {
-        default: 'matter'
+        default: 'matter',
+        matter: {
+            gravity: { y: 1 } // Ensure gravity is set
+        }
     }
 };
 
