@@ -1,5 +1,9 @@
 class Example extends Phaser.Scene
 {
+    preload(){
+        //this.load.setBaseURL('./assets');
+        this.load.image('Startblock', './assets/StartBlock.png');
+    }
     constructor()
     {
         super();
@@ -7,7 +11,7 @@ class Example extends Phaser.Scene
 
     create()
     {
-        const body1 = this.matter.add.image(400, 150, 'platform').setStatic(true);
+        const body1 = this.matter.add.image(400, 150, 'StartBlock').setStatic(true);
         const body2 = this.matter.add.image(600, 350, 'platform').setStatic(true);
         const body3 = this.matter.add.image(200, 550, 'platform').setStatic(true);
         const body4 = this.matter.add.image(200, 300, 'platform').setStatic(true);
