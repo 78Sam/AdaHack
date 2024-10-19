@@ -15,5 +15,8 @@ const PROPERTIES = {
         restitution: 1.0, // Bounciness
         friction: 0.5, // Friction
         density: 0.001 // Density
+    },
+    "cannon_barrel": {
+        isStatic: true
     }
 }
