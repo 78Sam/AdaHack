@@ -22,8 +22,8 @@ class Example extends Phaser.Scene {
 
 const config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
+    width: width,
+    height: height,
     scene: Example,
     physics: {
         default: 'matter'
