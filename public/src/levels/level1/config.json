@@ -4,8 +4,10 @@
         "explosive"
     ],
     "level": [
-        ["empty", "empty", "empty"],
-        ["empty", "empty", "empty"],
-        ["wood", "wood", "wood"]
+        {"s_type":"wood", "i_x":1, "i_y":1},
+        {"s_type":"steel", "i_x":2, "i_y":2},
+        {"s_type":"wood", "i_x":3, "i_y":3},
+        {"s_type":"steel", "i_x":4, "i_y":4},
+        {"s_type":"wood", "i_x":5, "i_y":5}
     ]
 }
