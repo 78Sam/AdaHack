@@ -1,3 +1,4 @@
+
 function Parser(level_name) {
     return fetch(`./src/levels/${level_name}/config.json`)
         .then((res) => res.text())
